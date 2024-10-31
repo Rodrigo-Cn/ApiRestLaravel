@@ -13,32 +13,35 @@ class Reserve extends Model
     protected $primaryKey = 'reserve_id';
 
     protected $fillable = [
-        'hotel_id', 'room_id', 'check_in', 'check_out', 'total'
+        'hotel_id',
+        'room_id',
+        'check_in',
+        'check_out',
+        'total'
     ];
-
 
     public function hotel()
     {
-        return $this->belongsTo(Hotel::class, 'hotel_id', 'hotel_id');
+        return $this->belongsTo(Hotel::class, 'hotel_id');
     }
 
     public function room()
     {
-        return $this->belongsTo(Room::class, 'room_id', 'room_id');
+        return $this->belongsTo(Room::class, 'room_id');
     }
 
     public function guests()
     {
-        return $this->belongsToMany(Guest::class, 'reserve_guests', 'reserve_id', 'guest_id');
+        return $this->belongsToMany(Guest::class, 'reserve_guests');
     }
 
     public function dailies()
     {
-        return $this->hasMany(Daily::class, 'reserve_id', 'reserve_id');
+        return $this->hasMany(Daily::class);
     }
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'reserve_id', 'reserve_id');
+        return $this->hasMany(Payment::class);
     }
 }

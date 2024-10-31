@@ -11,14 +11,14 @@ class Guest extends Model
     /** @use HasFactory<\Database\Factories\GuestFactory> */
     use HasFactory;
 
-    
-    protected $primaryKey = 'guest_id';
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'phone'
+    ];
 
-    protected $fillable = ['first_name', 'last_name', 'phone'];
-
-    // Relacionamento N:M com Reserve
     public function reserves()
     {
-        return $this->belongsToMany(Reserve::class, 'reserve_guests', 'guest_id', 'reserve_id');
+        return $this->belongsToMany(Reserve::class, 'reserve_guests');
     }
 }

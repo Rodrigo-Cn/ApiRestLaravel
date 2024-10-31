@@ -7,11 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReserveGuest extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReserveGuestFactory> */
     use HasFactory;
 
-    public $incrementing = false;
     protected $table = 'reserve_guests';
 
-    protected $fillable = ['reserve_id', 'guest_id'];
+    protected $fillable = [
+        'reserve_id',
+        'guest_id'
+    ];
+
+    public function reserve()
+    {
+        return $this->belongsTo(Reserve::class, 'reserve_id');
+    }
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class, 'guest_id');
+    }
 }

@@ -15,10 +15,12 @@ return new class extends Migration
             $table->unsignedBigInteger('reserve_id');
             $table->unsignedBigInteger('guest_id');
 
-            $table->primary(['reserve_id', 'guest_id']);
-    
+            $table->timestamps();
+
             $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
-            $table->foreign('guest_id')->references('guest_id')->on('guests')->onDelete('cascade');
+            $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
+
+            $table->primary(['reserve_id', 'guest_id']);
         });
     }
 

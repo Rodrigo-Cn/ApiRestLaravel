@@ -12,7 +12,11 @@ class Hotel extends Model
 
     protected $primaryKey = 'hotel_id';
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'hotel_id',
+        'name',
+    ];
+
 
     public function rooms()
     {

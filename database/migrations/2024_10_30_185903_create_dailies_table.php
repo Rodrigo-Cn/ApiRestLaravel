@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dailies', function (Blueprint $table) {
-            $table->id('daily_id');
+            $table->id();
             $table->unsignedBigInteger('reserve_id');
             $table->date('date');
             $table->decimal('value', 10, 2);
-    
+
+            // Defina a chave estrangeira corretamente
             $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
-    
+
             $table->timestamps();
         });
     }
