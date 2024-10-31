@@ -1,39 +1,35 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Guest, Payment, Reserve, Daily, ReserveGuest};
 use Illuminate\Http\Request;
+use App\Models\Reserve;
+use App\Models\Guest;
+use App\Models\Daily;
+use App\Models\Payment;
+use App\Models\ReserveGuest;
 
 class ReserveController extends Controller
 {
+    protected $reserve;
 
+    public function __construct(Reserve $reserve)
+    {
+        $this->reserve = $reserve;
+    }
+    
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'hotel_id' => 'required|exists:hotels,hotel_id',
-            'room_id' => 'required|exists:rooms,room_id',
-            'guest.first_name' => 'required|string|max:60',
-            'guest.last_name' => 'required|string|max:60',
-            'guest.phone' => 'required|string|max:11',
-            'check_in' => 'required|date',
-            'check_out' => 'required|date|after:check_in',
-            'daily' => 'required|array',
-            'daily.*.date' => 'required|date',
-            'daily.*.value' => 'required|numeric|min:0',
-            'payments' => 'nullable|array',
-            'payments.*.method' => 'required|integer',
-            'payments.*.value' => 'required|numeric|min:0',
-        ]);
+        $validatedData = $request->validate($this->reserve->rules(), $this->reserve->messages());
 
         $reservationExists = Reserve::where('room_id', $validatedData['room_id'])
             ->where(function ($query) use ($validatedData) {
                 $query->whereBetween('check_in', [$validatedData['check_in'], $validatedData['check_out']])
-                    ->orWhereBetween('check_out', [$validatedData['check_in'], $validatedData['check_out']]);
+                      ->orWhereBetween('check_out', [$validatedData['check_in'], $validatedData['check_out']]);
             })
             ->exists();
 
@@ -86,7 +82,6 @@ class ReserveController extends Controller
 
         $reserve->update(['total' => $total]);
 
-        return response()->json($reserve, 200);
+        return response()->json($reserve, 201);
     }
-
 }
