@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Room;
 
 class RoomController extends Controller
 {
@@ -12,15 +13,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Room::all();
     }
 
     /**
@@ -28,7 +21,14 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $request->validate([
+            'hotel_id' => 'required|exists:hotels,hotel_id',
+            'name' => 'required|string|max:100',
+        ]);
+
+        $room = Room::create($validate);
+
+        return response()->json($room, 200);
     }
 
     /**
@@ -36,15 +36,7 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return Room::findOrFail($id);
     }
 
     /**
@@ -52,7 +44,15 @@ class RoomController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $room =  Room::findOrFail($id);
+
+        $validate = $request->validate([
+            'name' => 'sometimes|string|max:100',
+        ]);
+
+        $room->update($validate);
+
+        return response()->json($room, 200);
     }
 
     /**
@@ -60,6 +60,10 @@ class RoomController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $room =  Room::findOrFail($id);
+
+        $room->delete();
+
+        return response()->json(['message' => 'Quarto deletado com sucesso'], 200);
     }
 }
