@@ -28,12 +28,12 @@ class Room extends Model
         if ($isUpdate) {
             return [
                 'hotel_id' => 'sometimes|required|exists:hotels,hotel_id',
-                'name' => 'sometimes|required|string|max:100',
+                'name' => 'sometimes|required|string|max:70',
             ];
         } else {
             return [
                 'hotel_id' => 'required|exists:hotels,hotel_id',
-                'name' => 'required|string|max:100',
+                'name' => 'required|string|max:70',
             ];
         }     
     }
