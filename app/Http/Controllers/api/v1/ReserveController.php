@@ -8,7 +8,7 @@ use App\Models\Reserve;
 use App\Models\Guest;
 use App\Models\Daily;
 use App\Models\Payment;
-use App\Models\ReserveGuest;
+use App\Http\Requests\ReserveRequest;
 
 class ReserveController extends Controller
 {
@@ -22,9 +22,9 @@ class ReserveController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ReserveRequest $request)
     {
-        $validatedData = $request->validate($this->reserve->rules(), $this->reserve->messages());
+        $validatedData = $request->validated();
 
         $reservationExists = Reserve::where('room_id', $validatedData['room_id'])
             ->where(function ($query) use ($validatedData) {
@@ -37,27 +37,22 @@ class ReserveController extends Controller
             return response()->json(['error' => 'Quarto não disponível para as datas selecionadas.'], 409);
         }
 
-        $guest = Guest::updateOrCreate(
-            ['phone' => $validatedData['guest']['phone']],
-            [
-                'first_name' => $validatedData['guest']['first_name'],
-                'last_name' => $validatedData['guest']['last_name'],
-            ]
-        );
-
         $reserve = Reserve::create([
             'hotel_id' => $validatedData['hotel_id'],
             'room_id' => $validatedData['room_id'],
-            'guest_id' => $guest->id,
             'check_in' => $validatedData['check_in'],
             'check_out' => $validatedData['check_out'],
             'total' => 0,
         ]);
 
-        ReserveGuest::create([
-            'reserve_id' => $reserve->reserve_id,
-            'guest_id' => $guest->id,
-        ]);
+        Guest::updateOrCreate(
+            ['phone' => $validatedData['guest']['phone']],
+            [
+                'reserve_id' => $reserve->reserve_id,
+                'first_name' => $validatedData['guest']['first_name'],
+                'last_name' => $validatedData['guest']['last_name'],
+            ]
+        );
 
         $total = 0;
         foreach ($validatedData['daily'] as $dailyData) {
