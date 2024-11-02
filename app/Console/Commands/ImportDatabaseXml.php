@@ -108,23 +108,18 @@ class ImportDatabaseXml extends Command
 
             if (isset($reserveData->Guests->Guest)) {
                 foreach ($reserveData->Guests->Guest as $guestData) {
-                    $guest = Guest::updateOrCreate(
+                    Guest::updateOrCreate(
                         [
+                            'reserve_id' => $reserve->reserve_id,
                             'first_name' => (string) $guestData->Name,
                             'last_name' => (string) $guestData->LastName,
                             'phone' => (string) $guestData->Phone
                         ]
                     );
 
-                    ReserveGuest::updateOrCreate(
-                        [
-                            'reserve_id' => $reserve->reserve_id,
-                            'guest_id' => $guest->id
-                        ]
-                    );
                 }
             } else {
-                ReserveGuest::insert([]);
+                Guest::insert([]);
             }
 
             if (isset($reserveData->Dailies->Daily)) {

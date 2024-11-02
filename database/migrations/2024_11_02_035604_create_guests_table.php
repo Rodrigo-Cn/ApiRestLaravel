@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reserve_guests', function (Blueprint $table) {
+        Schema::create('guests', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('reserve_id');
-            $table->unsignedBigInteger('guest_id');
-
-            $table->timestamps();
-
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('phone')->nullable();
             $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
-            $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
-
-            $table->primary(['reserve_id', 'guest_id']);
+            $table->timestamps();
         });
     }
 
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reserve_guests');
+        Schema::dropIfExists('guests');
     }
 };

@@ -12,13 +12,14 @@ class Guest extends Model
     use HasFactory;
 
     protected $fillable = [
+        'reserve_id',
         'first_name',
         'last_name',
         'phone'
     ];
 
-    public function reserves()
+    public function reserve()
     {
-        return $this->belongsToMany(Reserve::class, 'reserve_guests');
+        return $this->belongsTo(Reserve::class);
     }
 }

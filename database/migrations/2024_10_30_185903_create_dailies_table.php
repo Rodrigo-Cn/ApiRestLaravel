@@ -17,7 +17,6 @@ return new class extends Migration
             $table->date('date');
             $table->decimal('value', 10, 2);
 
-            // Defina a chave estrangeira corretamente
             $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
 
             $table->timestamps();

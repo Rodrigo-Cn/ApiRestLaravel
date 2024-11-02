@@ -72,7 +72,7 @@ class Reserve extends Model
 
     public function guests()
     {
-        return $this->belongsToMany(Guest::class, 'reserve_guests');
+        return $this->hasMany(Guest::class);
     }
 
     public function dailies()
