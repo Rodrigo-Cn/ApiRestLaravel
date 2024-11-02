@@ -31,7 +31,7 @@ class GuestRepository implements GuestRepositoryInterface
     public function deleteGuest($id)
     {
         $guest = $this->getGuestById($id);
-        $guest ->delete();
+        $guest->delete();
         return $guest;
     }
 }

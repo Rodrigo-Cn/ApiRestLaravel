@@ -31,7 +31,7 @@ class DailyRepository implements DailyRepositoryInterface
     public function deleteDaily($id)
     {
         $daily = $this->getDailyById($id);
-        $daily ->delete();
+        $daily->delete();
         return $daily;
     }
 }

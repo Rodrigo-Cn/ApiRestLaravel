@@ -32,8 +32,8 @@ class RoomController extends Controller
      */
     public function store(RoomRequest $request)
     {
-        $validatedData = $request->validated();
-        $room = $this->roomRepository->createRoom($validatedData);
+        $validated = $request->validated();
+        $room = $this->roomRepository->createRoom($validated);
 
         return response()->json($room, 201);
     }

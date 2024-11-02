@@ -31,7 +31,7 @@ class PaymentRepository implements PaymentRepositoryInterface
     public function deletePayment($id)
     {
         $payment = $this->getPaymentById($id);
-        $payment ->delete();
+        $payment->delete();
         return $payment;
     }
 }
