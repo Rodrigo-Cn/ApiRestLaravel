@@ -4,15 +4,16 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Room;
+use App\Repositories\Contracts\RoomRepositoryInterface;
+use App\Http\Requests\RoomRequest;
 
 class RoomController extends Controller
 {
-    protected $room;
+    protected $roomRepository;
 
-    public function __construct(Room $room)
+    public function __construct(RoomRepositoryInterface $roomRepository)
     {
-        $this->room = $room;
+        $this->roomRepository = $roomRepository;
     }
 
     /**
@@ -20,24 +21,19 @@ class RoomController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('attributes')) {
-            $attributes = explode(',', $request->query('attributes'));
-            $rooms = Room::select($attributes)->get();
-        } else {
-            $rooms = Room::all();
-        }
-    
+        $attributes = $request->has('attributes') ? explode(',', $request->query('attributes')) : null;
+        $rooms = $this->roomRepository->getAllRooms($attributes);
+
         return response()->json($rooms, 200);
     }    
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RoomRequest $request)
     {
-        $validate = $request->validate($this->room->rules(), $this->room->messages());
-
-        $room = Room::create($validate);
+        $validatedData = $request->validated();
+        $room = $this->roomRepository->createRoom($validatedData);
 
         return response()->json($room, 201);
     }
@@ -47,7 +43,7 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {   
-        $room = Room::find($id);
+        $room = $this->roomRepository->getRoomById($id);
     
         if (!$room) {
             return response()->json(["error" => "Quarto não registrado"], 404);
@@ -59,34 +55,32 @@ class RoomController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(RoomRequest $request, string $id)
     {
-        $room = Room::find($id);
+        $room = $this->roomRepository->getRoomById($id);
         
         if (!$room) {
             return response()->json(["error" => "Quarto não registrado"], 404);
         }
 
-        $validate = $request->validate($room->rules(true), $room->messages());
-
-        $room->update($validate);
+        $validatedData = $request->validated();
+        $this->roomRepository->updateRoom($id, $validatedData);
 
         return response()->json($room, 200);
     }
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $room = Room::find($id);
+        $room = $this->roomRepository->getRoomById($id);
      
         if (!$room) {
             return response()->json(["error" => "Quarto não registrado"], 404);
         }
 
-        $room->delete();
+        $this->roomRepository->deleteRoom($id);
 
         return response()->json(['success' => 'Quarto deletado com sucesso'], 200);
     }
