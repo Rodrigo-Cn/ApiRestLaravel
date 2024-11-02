@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Repositories\Contracts\{RoomRepositoryInterface,ReserveRepositoryInterface};
+
+use App\Repositories\Eloquent\{RoomRepository,ReserveRepository};
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+         $this->app->bind(RoomRepositoryInterface::class, RoomRepository::class);
+         $this->app->bind(ReserveRepositoryInterface::class, ReserveRepository::class);
     }
 
     /**
