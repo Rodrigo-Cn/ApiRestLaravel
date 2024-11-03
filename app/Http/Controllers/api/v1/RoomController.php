@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\api\v1;
+namespace App\Http\Controllers\Api\V1;
+
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\RoomRepositoryInterface;
@@ -13,7 +15,7 @@ class RoomController extends Controller
     public function __construct(RoomRepositoryInterface $roomRepository)
     {
         $this->roomRepository = $roomRepository;
-        $this->middleware('auth:sanctum')->only('store','update','delete');
+        $this->middleware('auth:sanctum')->only('store', 'update', 'delete');
     }
 
     /**
@@ -23,6 +25,8 @@ class RoomController extends Controller
     {
         $attributes = $request->has('attributes') ? explode(',', $request->query('attributes')) : null;
         $rooms = $this->roomRepository->getAllRooms($attributes);
+
+        Log::info('Listagem de quartos concluída.', ['total_quartos' => count($rooms)]);
 
         return response()->json($rooms, 200);
     }    
@@ -35,6 +39,8 @@ class RoomController extends Controller
         $validatedRoom = $request->validated();
         $room = $this->roomRepository->createRoom($validatedRoom);
 
+        Log::info('Novo quarto criado com sucesso.', ['room_id' => $room->id]);
+
         return response()->json($room, 201);
     }
 
@@ -46,8 +52,11 @@ class RoomController extends Controller
         $room = $this->roomRepository->getRoomById($id);
     
         if (!$room) {
+            Log::warning('Quarto não encontrado.', ['room_id' => $id]);
             return response()->json(["error" => "Quarto não registrado"], 404);
         }
+
+        Log::info('Quarto encontrado.', ['room_id' => $room->id]);
     
         return response()->json($room, 200);
     }    
@@ -57,14 +66,19 @@ class RoomController extends Controller
      */
     public function update(RoomRequest $request, string $id)
     {
+        Log::info('Iniciando update de quarto.', ['room_id' => $id, 'user_id' => $request->user()->id]);
+
         $room = $this->roomRepository->getRoomById($id);
         
         if (!$room) {
+            Log::warning('Tentativa de update falhou. Quarto não encontrado.', ['room_id' => $id]);
             return response()->json(["error" => "Quarto não registrado"], 404);
         }
 
         $validatedRoom = $request->validated();
         $this->roomRepository->updateRoom($id, $validatedRoom);
+
+        Log::info('Quarto atualizado com sucesso.', ['room_id' => $id]);
 
         return response()->json($room, 200);
     }
@@ -77,10 +91,13 @@ class RoomController extends Controller
         $room = $this->roomRepository->getRoomById($id);
      
         if (!$room) {
+            Log::warning('Tentativa de exclusão falhou. Quarto não encontrado.', ['room_id' => $id]);
             return response()->json(["error" => "Quarto não registrado"], 404);
         }
 
         $this->roomRepository->deleteRoom($id);
+
+        Log::info('Quarto deletado com sucesso.', ['room_id' => $id]);
 
         return response()->json(['success' => 'Quarto deletado com sucesso'], 200);
     }
