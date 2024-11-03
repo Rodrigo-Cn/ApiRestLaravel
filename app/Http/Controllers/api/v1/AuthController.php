@@ -1,35 +1,34 @@
 <?php
+
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Repositories\Eloquent\AuthRepository;
 
 class AuthController extends Controller
 {
+    protected $authRepository;
+
+    public function __construct(AuthRepository $authRepository)
+    {
+        $this->authRepository = $authRepository;
+    }
+
     public function register(RegisterRequest $request)
     {
-        $request->validated();
+        $this->authRepository->register($request->validated());
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return response()->json(['sucess' => 'User registrado com sucesso!'], 201);
+        return response()->json(['success' => 'Usuário registrado com sucesso!'], 201);
     }
 
     public function login(LoginRequest $request)
     {
-        $request->validated();
+        $user = $this->authRepository->login($request->validated());
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user) {
             return response()->json(['error' => 'Credenciais inválidas!'], 401);
         }
 
@@ -40,8 +39,8 @@ class AuthController extends Controller
     
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->authRepository->logout($request->user());
 
-        return response()->json(['sucess' => 'Logout com sucesso!']);
+        return response()->json(['success' => 'Logout realizado com sucesso!']);
     }
 }

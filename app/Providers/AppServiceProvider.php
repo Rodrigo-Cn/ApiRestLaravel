@@ -3,11 +3,14 @@
 namespace App\Providers;
 
 use App\Models\Payment;
+use App\Repositories\AuthRepository as RepositoriesAuthRepository;
 use Illuminate\Support\ServiceProvider;
 
-use App\Repositories\Contracts\{RoomRepositoryInterface,ReserveRepositoryInterface,PaymentRepositoryInterface,GuestRepositoryInterface,DailyRepositoryInterface};
+use App\Repositories\Contracts\{RoomRepositoryInterface,ReserveRepositoryInterface,PaymentRepositoryInterface
+,GuestRepositoryInterface,DailyRepositoryInterface,AuthRepositoryInterface};
 
-use App\Repositories\Eloquent\{RoomRepository,ReserveRepository,PaymentRepository,GuestRepository,DailyRepository};
+use App\Repositories\Eloquent\{RoomRepository,ReserveRepository,PaymentRepository,GuestRepository,DailyRepository
+,AuthRepository};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
          $this->app->bind(PaymentRepositoryInterface::class, PaymentRepository::class);
          $this->app->bind(GuestRepositoryInterface::class, GuestRepository::class);
          $this->app->bind(DailyRepositoryInterface::class, DailyRepository::class);
+         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     }
 
     /**
