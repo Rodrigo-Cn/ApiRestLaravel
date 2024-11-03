@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\api\v1;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\RoomRepositoryInterface;
@@ -14,6 +13,7 @@ class RoomController extends Controller
     public function __construct(RoomRepositoryInterface $roomRepository)
     {
         $this->roomRepository = $roomRepository;
+        $this->middleware('auth:sanctum')->only('store','update','delete');
     }
 
     /**

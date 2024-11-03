@@ -3,6 +3,8 @@
 use Laravel\Sanctum\Sanctum;
 
 return [
+    'personal_access_token_model' => \Laravel\Sanctum\PersonalAccessToken::class,
+
 
     /*
     |--------------------------------------------------------------------------
