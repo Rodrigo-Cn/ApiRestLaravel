@@ -11,6 +11,7 @@ Route::post('/reserves/{id}/guest', [ReserveController::class, 'storeGuest']);
 Route::post('/reserves/{id}/payment', [ReserveController::class, 'storePayment']);
 Route::post('/reserves/{id}/daily', [ReserveController::class, 'storeDaily']);
 Route::post('reserves', [ReserveController::class, 'store']);
+Route::get('reserves', [ReserveController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])->name('logout');

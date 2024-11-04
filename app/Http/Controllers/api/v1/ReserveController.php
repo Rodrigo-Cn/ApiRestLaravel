@@ -8,6 +8,7 @@ use App\Repositories\Eloquent\ReserveRepository;
 use App\Http\Requests\{ReserveRequest, GuestRequest, DailyRequest, PaymentRequest};
 use App\Models\Daily;
 use App\Models\Reserve;
+use Illuminate\Http\Request;
 use App\Repositories\Eloquent\{GuestRepository, PaymentRepository, DailyRepository};
 use OpenApi\Annotations as OA;
 
@@ -18,8 +19,51 @@ class ReserveController extends Controller
     public function __construct(ReserveRepository $reserveRepository)
     {
         $this->reserveRepository = $reserveRepository;
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum')->only('store');;
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/reserves",
+     *     summary="Lista todas as reservas",
+     *     tags={"Reserves"},
+     *     @OA\Parameter(
+     *         name="attributes",
+     *         in="query",
+     *         required=false,
+     *         description="Atributos a serem retornados na resposta, separados por vírgula",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de reservas retornada com sucesso",
+     *         @OA\JsonContent(type="array",
+     *             @OA\Items(type="object",
+     *                 @OA\Property(property="id", type="integer", example=1, description="ID da reserva"),
+     *                 @OA\Property(property="room_id", type="integer", example=1, description="ID do quarto"),
+     *                 @OA\Property(property="check_in", type="string", format="date", example="2024-11-01", description="Data de check-in"),
+     *                 @OA\Property(property="check_out", type="string", format="date", example="2024-11-05", description="Data de check-out"),
+     *                 @OA\Property(property="total", type="number", format="float", example=500.00, description="Valor total da reserva")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro interno do servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erro ao listar as reservas.")
+     *         )
+     *     )
+     * )
+     */
+    public function index(Request $request)
+    {
+        $attributes = $request->has('attributes') ? explode(',', $request->query('attributes')) : null;
+        $reserves = $this->reserveRepository->getAllReserves($attributes);
+        Log::info('Listagem de reservas concluída.', ['total_reserves' => count($reserves)]);
+
+        return response()->json($reserves, 200);
+    }    
 
     /**
      * @OA\Post(

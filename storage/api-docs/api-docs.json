@@ -183,6 +183,85 @@
             }
         },
         "/api/reserves": {
+            "get": {
+                "tags": [
+                    "Reserves"
+                ],
+                "summary": "Lista todas as reservas",
+                "operationId": "587e3b92d1dc5af4c51900220b1032f0",
+                "parameters": [
+                    {
+                        "name": "attributes",
+                        "in": "query",
+                        "description": "Atributos a serem retornados na resposta, separados por vírgula",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de reservas retornada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "ID da reserva",
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "room_id": {
+                                                "description": "ID do quarto",
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "check_in": {
+                                                "description": "Data de check-in",
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2024-11-01"
+                                            },
+                                            "check_out": {
+                                                "description": "Data de check-out",
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2024-11-05"
+                                            },
+                                            "total": {
+                                                "description": "Valor total da reserva",
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 500
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erro ao listar as reservas."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Reserves"
