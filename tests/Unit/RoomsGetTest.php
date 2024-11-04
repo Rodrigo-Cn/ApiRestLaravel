@@ -7,7 +7,7 @@ use Tests\TestCase;
 use App\Models\Room;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class RoomGetTest extends TestCase
+class RoomsGetTest extends TestCase
 {
     use RefreshDatabase;
 

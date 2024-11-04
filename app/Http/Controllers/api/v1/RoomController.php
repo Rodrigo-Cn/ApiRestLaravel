@@ -16,7 +16,7 @@ class RoomController extends Controller
     public function __construct(RoomRepositoryInterface $roomRepository)
     {
         $this->roomRepository = $roomRepository;
-        $this->middleware('auth:sanctum')->only('store', 'update', 'destroy');
+        #$this->middleware('auth:sanctum')->only('store', 'update', 'destroy');
     }
 
     /**

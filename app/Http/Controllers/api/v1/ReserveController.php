@@ -19,7 +19,7 @@ class ReserveController extends Controller
     public function __construct(ReserveRepository $reserveRepository)
     {
         $this->reserveRepository = $reserveRepository;
-        $this->middleware('auth:sanctum')->only('store');;
+        #$this->middleware('auth:sanctum')->only('store', 'storeGuest', 'storeDaily', 'storePayment');;
     }
 
     /**
