@@ -41,4 +41,13 @@ class ReserveController extends Controller
             return response()->json(['error' => 'Erro ao criar a reserva.'], 500);
         }
     }
+    public function storeDaily(string $id){
+
+    }
+    public function storePayment(string $id){
+
+    }
+    public function storeGuest(string $id){
+
+    }
 }

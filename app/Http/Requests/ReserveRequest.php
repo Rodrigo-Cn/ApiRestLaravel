@@ -30,7 +30,7 @@ class ReserveRequest extends FormRequest
             'guest.*.phone' => 'required|string|min:11|max:14',
             'check_in' => 'required|date',
             'check_out' => 'required|date|after:check_in',
-            'daily' => 'required|array',
+            'daily' => 'nullable|array',
             'daily.*.date' => 'required|date',
             'daily.*.value' => 'required|numeric|min:0',
             'payments' => 'nullable|array',
