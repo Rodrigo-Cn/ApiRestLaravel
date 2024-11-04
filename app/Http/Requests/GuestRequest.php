@@ -22,7 +22,6 @@ class GuestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'room_id' => 'required|exists:rooms,id',
             'first_name' => 'required|string|max:60',
             'last_name' => 'required|string|max:60',
             'phone' => 'required|string|min:11|max:14',
@@ -32,8 +31,6 @@ class GuestRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'room_id.required' => 'O campo room_id é obrigatório.',
-            'room_id.exists' => 'O quarto especificado não foi encontrado.',
             'first_name.required' => 'O campo primeiro nome é obrigatório.',
             'first_name.string' => 'O campo primeiro nome deve ser uma string.',
             'first_name.max' => 'O campo primeiro nome não pode ter mais que 60 caracteres.',

@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Reserve;
 use App\Repositories\Contracts\ReserveRepositoryInterface;
+use App\Models\{Hotel,Room};
 
 class ReserveRepository implements ReserveRepositoryInterface
 {
@@ -34,9 +35,20 @@ class ReserveRepository implements ReserveRepositoryInterface
 
     public function createReserve(array $data)
     {
+        $hotelExists = Hotel::where('hotel_id', $data['hotel_id'])->exists();
+        $roomExists = Room::where('room_id', $data['room_id'])->where('hotel_id', $data['hotel_id'])->exists();
+
+        if (!$hotelExists) {
+            return response()->json(['error' => 'Hotel não encontrado.'], 404);
+        }
+
+        if (!$roomExists) {
+            return response()->json(['error' => 'Quarto não encontrado.'], 404);
+        }
+
         $reservationExists = Reserve::where('room_id', $data['room_id'])->where(function ($query) use ($data) {
             $query->whereBetween('check_in', [$data['check_in'], $data['check_out']])
-                  ->orWhereBetween('check_out', [$data['check_in'], $data['check_out']]);
+                ->orWhereBetween('check_out', [$data['check_in'], $data['check_out']]);
         })->exists();
 
         if ($reservationExists) {
@@ -57,20 +69,23 @@ class ReserveRepository implements ReserveRepositoryInterface
                 'reserve_id' => $reserve->reserve_id,
                 'first_name' => $guestData['first_name'],
                 'last_name' => $guestData['last_name'],
-                ]);
+            ]);
         }
 
         $total = 0;
-        foreach ($data['daily'] as $dailyData) {
-            $this->dailyRepository->createDaily([
-                'reserve_id' => $reserve->reserve_id,
-                'date' => $dailyData['date'],
-                'value' => $dailyData['value'],
-            ]);
-            $total += $dailyData['value'];
+
+        if (isset($data['daily']) && is_array($data['daily'])) {
+            foreach ($data['daily'] as $dailyData) {
+                $this->dailyRepository->createDaily([
+                    'reserve_id' => $reserve->reserve_id,
+                    'date' => $dailyData['date'],
+                    'value' => $dailyData['value'],
+                ]);
+                $total += $dailyData['value'];
+            }
         }
 
-        if (isset($data['payments'])) {
+        if (isset($data['payments']) && is_array($data['payments'])) {
             foreach ($data['payments'] as $paymentData) {
                 $this->paymentRepository->createPayment([
                     'reserve_id' => $reserve->reserve_id,

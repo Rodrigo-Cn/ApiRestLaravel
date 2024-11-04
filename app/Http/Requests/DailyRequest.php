@@ -22,7 +22,6 @@ class DailyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'room_id' => 'required|exists:rooms,id',
             'date' => 'required|date',
             'value' => 'required|numeric|min:0',
         ];
@@ -31,8 +30,6 @@ class DailyRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'room_id.required' => 'O campo room_id é obrigatório.',
-            'room_id.exists' => 'O quarto especificado não foi encontrado.',
             'date.required' => 'O campo data é obrigatório.',
             'date.date' => 'O campo data deve ser uma data válida.',
             'value.required' => 'O campo valor é obrigatório.',

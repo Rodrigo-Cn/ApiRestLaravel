@@ -22,17 +22,14 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'room_id' => 'required|exists:rooms,id',
             'method' => 'required|integer',
-            'value' => 'required|numeric|min:0',
+            'value' => 'required|numeric|min:1|max:3',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'room_id.required' => 'O campo room_id é obrigatório.',
-            'room_id.exists' => 'O quarto especificado não foi encontrado.',
             'method.required' => 'O método de pagamento é obrigatório.',
             'method.integer' => 'O método de pagamento deve ser um número inteiro.',
             'value.required' => 'O valor do pagamento é obrigatório.',

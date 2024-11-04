@@ -7,6 +7,9 @@ use App\Http\Controllers\Api\V1\ReserveController;
 use App\Http\Controllers\Api\V1\AuthController;
 
 Route::apiResource('rooms', RoomController::class);
+Route::post('/reserves/{id}/guest', [ReserveController::class, 'storeGuest']);
+Route::post('/reserves/{id}/payment', [ReserveController::class, 'storePayment']);
+Route::post('/reserves/{id}/daily', [ReserveController::class, 'storeDaily']);
 Route::post('reserves', [ReserveController::class, 'store']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
