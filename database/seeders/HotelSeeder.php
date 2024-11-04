@@ -1,16 +1,16 @@
 <?php
 
 namespace Database\Seeders;
+use App\Models\Hotel;
 use Illuminate\Database\Seeder;
-use App\Models\Reserve;
 
-class ReserveSeeder extends Seeder
+class HotelSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Reserve::factory()->count(1)->create();
+        Hotel::factory()->count(1)->create();
     }
 }

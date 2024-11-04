@@ -21,11 +21,12 @@ class ReserveFactory extends Factory
         $checkIn = $this->faker->dateTimeBetween('now', '+1 year');
 
         return [
-            'hotel_id' => $this->faker->numberBetween(1, 3),
-            'room_id' => $this->faker->numberBetween(1, 6),
+            'reserve_id' => 7,
+            'hotel_id' => 7,
+            'room_id' => 7,
             'check_in' => $checkIn ,
-            'check_out' => $this->faker->dateTimeBetween($checkIn , '+3 year'),
-            'total' => 0,
+            'check_out' => $this->faker->dateTimeBetween($checkIn , '+1 year'),
+            'total' => 10000,
         ];
     }
 }

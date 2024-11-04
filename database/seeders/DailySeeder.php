@@ -1,16 +1,17 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\Database\Seeder;
-use App\Models\Reserve;
 
-class ReserveSeeder extends Seeder
+use App\Models\Daily;
+use Illuminate\Database\Seeder;
+
+class DailySeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Reserve::factory()->count(1)->create();
+        Daily::factory()->count(3)->create();
     }
 }

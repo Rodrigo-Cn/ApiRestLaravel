@@ -20,7 +20,8 @@ class RoomFactory extends Factory
     public function definition(): array
     {
         return [
-            'hotel_id' => $this->faker->numberBetween(1,3),
+            'room_id' => 7,
+            'hotel_id' => 7,
             'name' => $this->faker->words(2,true),
         ];
     }
