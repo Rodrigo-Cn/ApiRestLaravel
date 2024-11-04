@@ -18,6 +18,36 @@ class AuthController extends Controller
         $this->authRepository = $authRepository;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/auth/register",
+     *     summary="Registra um novo usuário",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password"},
+     *             @OA\Property(property="name", type="string", example="João Silva", description="Nome do usuário"),
+     *             @OA\Property(property="email", type="string", example="joao@example.com", description="Email do usuário"),
+     *             @OA\Property(property="password", type="string", example="senha123", description="Senha do usuário")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Usuário registrado com sucesso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="string", example="Usuário registrado com sucesso!")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Erro de validação nos dados do usuário",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Dados inválidos")
+     *         )
+     *     )
+     * )
+     */
     public function register(RegisterRequest $request)
     {
         $user = $this->authRepository->register($request->validated());
@@ -27,6 +57,35 @@ class AuthController extends Controller
         return response()->json(['success' => 'Usuário registrado com sucesso!'], 201);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/auth/login",
+     *     summary="Realiza o login do usuário",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", example="joao@example.com", description="Email do usuário"),
+     *             @OA\Property(property="password", type="string", example="senha123", description="Senha do usuário")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login bem-sucedido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="token", type="string", example="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", description="Token de autenticação")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Credenciais inválidas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Credenciais inválidas!")
+     *         )
+     *     )
+     * )
+     */
     public function login(LoginRequest $request)
     {
         $user = $this->authRepository->login($request->validated());
@@ -43,6 +102,20 @@ class AuthController extends Controller
         return response()->json(['token' => $token]);
     }
     
+    /**
+     * @OA\Post(
+     *     path="/api/auth/logout",
+     *     summary="Realiza o logout do usuário",
+     *     tags={"Auth"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logout realizado com sucesso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="string", example="Logout realizado com sucesso!")
+     *         )
+     *     )
+     * )
+     */
     public function logout(Request $request)
     {
         $this->authRepository->logout($request->user());
