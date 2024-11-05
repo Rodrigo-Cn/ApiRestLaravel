@@ -37,24 +37,24 @@ class ReserveRepository implements ReserveRepositoryInterface
     {
         $hotelExists = Hotel::where('hotel_id', $data['hotel_id'])->exists();
         $roomExists = Room::where('room_id', $data['room_id'])->where('hotel_id', $data['hotel_id'])->exists();
-
+    
         if (!$hotelExists) {
             return response()->json(['error' => 'Hotel não encontrado.'], 404);
         }
-
+    
         if (!$roomExists) {
             return response()->json(['error' => 'Quarto não encontrado.'], 404);
         }
-
+    
         $reservationExists = Reserve::where('room_id', $data['room_id'])->where(function ($query) use ($data) {
             $query->whereBetween('check_in', [$data['check_in'], $data['check_out']])
                 ->orWhereBetween('check_out', [$data['check_in'], $data['check_out']]);
         })->exists();
-
+    
         if ($reservationExists) {
             return response()->json(['error' => 'Quarto não disponível para as datas selecionadas.'], 409);
         }
-
+    
         $reserve = Reserve::create([
             'hotel_id' => $data['hotel_id'],
             'room_id' => $data['room_id'],
@@ -62,7 +62,7 @@ class ReserveRepository implements ReserveRepositoryInterface
             'check_out' => $data['check_out'],
             'total' => 0,
         ]);
-
+    
         foreach ($data['guest'] as $guestData) {
             $this->guestRepository->createGuest([
                 'phone' => $guestData['phone'],
@@ -71,9 +71,9 @@ class ReserveRepository implements ReserveRepositoryInterface
                 'last_name' => $guestData['last_name'],
             ]);
         }
-
+    
         $total = 0;
-
+    
         if (isset($data['daily']) && is_array($data['daily'])) {
             foreach ($data['daily'] as $dailyData) {
                 $this->dailyRepository->createDaily([
@@ -84,7 +84,15 @@ class ReserveRepository implements ReserveRepositoryInterface
                 $total += $dailyData['value'];
             }
         }
-
+    
+        if (isset($data['discount']) && is_numeric($data['discount'])) {
+            $total -= $data['discount'];
+        }
+    
+        if (isset($data['interest']) && is_numeric($data['interest'])) {
+            $total += $data['interest'];
+        }
+    
         if (isset($data['payments']) && is_array($data['payments'])) {
             foreach ($data['payments'] as $paymentData) {
                 $this->paymentRepository->createPayment([
@@ -95,11 +103,12 @@ class ReserveRepository implements ReserveRepositoryInterface
                 $total -= $paymentData['value'];
             }
         }
-
+    
         $reserve->update(['total' => $total]);
-
+    
         return $reserve;
     }
+    
 
     public function updateReserve($id, array $data)
     {

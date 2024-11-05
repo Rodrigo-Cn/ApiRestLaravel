@@ -36,9 +36,11 @@ class ReserveRequest extends FormRequest
             'payments' => 'nullable|array',
             'payments.*.method' => 'required|integer',
             'payments.*.value' => 'required|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0',
+            'interest' => 'nullable|numeric|min:0',
         ];
     }
- 
+
     public function messages(): array
     {
         return [
@@ -61,6 +63,10 @@ class ReserveRequest extends FormRequest
             'payments.array' => 'Os pagamentos devem ser um array.',
             'payments.*.method.required' => 'O método de pagamento é obrigatório.',
             'payments.*.value.required' => 'O valor do pagamento é obrigatório.',
+            'discount.numeric' => 'O campo desconto deve ser um número.',
+            'discount.min' => 'O campo desconto deve ser no mínimo 0.',
+            'interest.numeric' => 'O campo juros deve ser um número.',
+            'interest.min' => 'O campo juros deve ser no mínimo 0.',
         ];
     }
 }

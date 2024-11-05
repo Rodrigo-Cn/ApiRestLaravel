@@ -189,7 +189,7 @@ php artisan app:import-database-xml storage/rooms.xml
 php artisan app:import-database-xml storage/reserves.xml
 ```
 
-É possível importa arquivos em outras rotas através desse comando:
+É possível importa arquivos em outros diretórios através desse comando:
 
 ```bash
 php artisan app:import-database-xml sua/rota/xml
@@ -248,6 +248,7 @@ php artisan app:import-database-xml sua/rota/xml
 --- 
 
 Execução individual de cada Seeder
+(Os seeders tem por padrão o id 7 em seus relacionamentos)
 
 ```bash
 php artisan db:seed --class=RoomSeeder
@@ -269,6 +270,58 @@ php artisan db:seed
 - É possível acessar os logs em `storage/logs/laravel.log`
 
 ---
+
+**Reserve** Adicionei a possibilidade de adicionar diárias, pagamentos, hóspedes, disconto e juros.
+
+- Aqui está um exemplo do json para cadastrar uma reserva
+```json
+{
+    "hotel_id": 1,
+    "room_id": 1,
+    "guest": [
+        {
+            "first_name": "João",
+            "last_name": "Silva",
+            "phone": "77999999999"
+        }
+    ],
+    "check_in": "2024-11-10",
+    "check_out": "2024-11-15",
+    "daily": [
+        {
+            "date": "2024-11-10",
+            "value": 100.0
+        },
+        {
+            "date": "2024-11-11",
+            "value": 100.0
+        },
+        {
+            "date": "2024-11-12",
+            "value": 100.0
+        },
+        {
+            "date": "2024-11-13",
+            "value": 100.0
+        },
+        {
+            "date": "2024-11-14",
+            "value": 100.0
+        }
+    ],
+    "payments": [
+        {
+            "method": 1,
+            "value": 200.0
+        }
+    ],
+    "discount": 50.0,
+    "interest": 20.0
+}
+```
+
+---
+
 **Migrations:** Tabelas adicionadas para o sistema.
 
 - Hotel:
