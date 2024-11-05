@@ -273,7 +273,7 @@ php artisan db:seed
 
 **Reserve** Adicionei a possibilidade de adicionar diárias, pagamentos, hóspedes, disconto e juros.
 
-- Aqui está um exemplo do json para cadastrar uma reserva
+- Aqui está um exemplo do json para cadastrar uma reserva(diárias, pagamentos, discontos e juros não são obrigatórios)
 ```json
 {
     "hotel_id": 1,
@@ -322,7 +322,7 @@ php artisan db:seed
 
 ---
 
-**Migrations:** Tabelas adicionadas para o sistema.
+**Migrations:** Tabelas adicionadas no sistema.
 
 - Hotel:
 ```bash
