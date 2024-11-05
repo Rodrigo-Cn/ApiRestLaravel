@@ -1,66 +1,494 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Documentação de Arquitetura de Software
 
-## About Laravel
+## Projeto: Teste de Estágio da Foco Multimídia utilizando API Rest
+- **Autor:** Rodrigo Costa Neves
+- **Data:** 29/10/2024 - 05/11/2024
+- **Versão:** 1.0
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Ferramentas Utilizadas
+- PHP 8.2.12
+- Laravel 11.30.0
+- Laravel Sanctum
+- MySQL
+- Swagger
+- Docker
+- Git(versionamento)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Como Rodar o Sistema
 
-## Learning Laravel
+1. **Clone o repositório:**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+   ```bash
+   git clone "https://github.com/Rodrigo-Cn/ApiRestLaravel.git"
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+O sistema pode ser executado de duas formas:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Execução Local:**
+   - Configure o banco de dados no `.env` com base na estrutura do `.env.example`.
+   - Crie a base de dados `apilaravel`
+   - Suba seu banco de dados localmente
+   - Use `php artisan serve` para iniciar a aplicação.
 
-## Laravel Sponsors
+3. **Execução com Docker:**
+   - Tenha **Docker** instalado em sua máquina.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   - Crie o arquivo `.env` com os dados registrados no `.env.example`, atualizando as configurações do banco:
 
-### Premium Partners
+     ```dotenv
+     DB_CONNECTION=mysql
+     DB_HOST=mysql
+     DB_PORT=3308
+     DB_DATABASE=apilaravel
+     DB_USERNAME=root // Seu username
+     DB_PASSWORD=password // Sua senha
+     ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+   - Configure o arquivo `docker-compose.yml` para que os parâmetros do MySQL coincidam com os do `.env`.
+  
+      ```dotenv
+      environment:
+         DB_CONNECTION: mysql
+         DB_HOST: mysql
 
-## Contributing
+      DB_PORT: 3308
+      DB_DATABASE: apilaravel
+      DB_USERNAME: //seu username
+      DB_PASSWORD: //suasenha
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+      mysql:
+       image: mysql:5.7
+       container_name: mysql
+       restart: always
+       environment:
+         MYSQL_ROOT_PASSWORD: //suasenha
+         MYSQL_DATABASE: apilaravel
+       ports:
+         - "3308:3306" //host:portacontainer
+       networks:
+         - laravel_app
+     ```
 
-## Code of Conduct
+### Executando a Aplicação com Docker
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Construa e inicie os containers:
 
-## Security Vulnerabilities
+   ```bash
+   docker compose build application
+   docker compose up -d
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Execute os comandos a seguir para configurar a aplicação:
 
-## License
+   ```bash
+   docker compose exec application composer install
+   docker compose exec application npm install
+   docker compose exec application php artisan key:generate
+   docker compose exec application php artisan migrate
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. Para popular o banco de dados com dados XML:
+
+   ```bash
+   docker compose exec application php artisan app:import-database-xml-all
+   docker compose exec application php artisan db:seed --class=UserSeeder
+   ```
+
+---
+
+### Rotas da API
+
+- Autenticação com Laravel Sanctum:
+  - **Login:** `/api/login` - `AuthController@login`
+  - (Se quiser retirar a validação por token das rotas só comentar o “$this->middleware('auth:sanctum');” no construtor de Room e Reserve.)
+
+   Para acessar as rotas de `POST`, `PUT` e `DELETE`, você precisará de um token de autenticação. Use o seguinte JSON para autenticação:
+   ```json
+   {
+       "email": "admin@gmail.com",
+       "password": "password"
+   }
+
+- Após login, use o token obtido para autenticar as requisições protegidas.
+- Para acessar as rotas assinaladas acima indique no Header
+
+   | Key            | Value                  |
+   |----------------|------------------------|
+   | Content-Type   | application/json       |
+   | application/json| application/json      |
+   | Authorization  | {seutoken}             |
+
+#### Endpoints Principais
+
+- Para acessar as rotas no Docker utilize: `http://localhost/api/suarota`
+- Localmente utiliza-se a rota padrão
+
+| Método | Rota                          | Controller               |
+|--------|-------------------------------|--------------------------|
+| GET    | /api/rooms                    | RoomController@index     |
+| POST   | /api/rooms                    | RoomController@store     |
+| PUT    | /api/rooms/{id}               | RoomController@update    |
+| DELETE | /api/rooms/{id}               | RoomController@destroy   |
+| POST   | /api/reserves                 | ReserveController@store  |
+| POST   | /api/reserves/{id}/guest      | ReserveController@storeGuest |
+| POST   | /api/reserves/{id}/payment    | ReserveController@storePayment |
+| POST   | /api/reserves/{id}/daily      | ReserveController@storeDaily |
+| GET    | /api/reserves                 | ReserveController@index  |
+| POST   | /api/login                    | AuthController@login     |
+| POST   | /api/register                 | AuthController@register  |
+| POST   | /api/logout                   | AuthController@logout    |
+| GET    | /api/documentation            | Swagger Documentation    |
+
+---
+
+### Documentação gerada com Swagger
+
+![Documentação Swagger](public/img/swagger.png)
+
+---
+
+### Estrutura do Banco de Dados
+
+- Arquivos **migrations**, **models**, **factories** e **controllers** foram criados com o comando:
+
+  ```bash
+  php artisan make:model NomeModel -cfm
+  ```
+
+- **Docker:** Banco de dados MySQL e PHPMyAdmin facilitam a visualização e manipulação dos dados.
+
+#### Diagrama Entidade-Relacionamento
+
+![Diagrama ER](public/img/database.png)
+- (As Migrations estão no final desse documento)
+
+---
+
+### Modelagem e Organização do Código
+
+- **MVC com Eloquent ORM:** Padrão seguido para estrutura e modelagem das entidades.
+- **APIs:** Controllers separados na pasta `api/v1` para manipulação dos dados do CRUD de quartos e reservas.
+- **Comando Cron:** Criado para persistir dados dos arquivos XML no banco de dados.
+
+#### Executar CRON para Importação dos Arquivos XML
+
+Todos os arquivos:
+
+```bash
+php artisan app:import-database-xml-all 
+```
+
+Um por vez:
+
+```bash
+php artisan app:import-database-xml storage/hotels.xml
+php artisan app:import-database-xml storage/rooms.xml
+php artisan app:import-database-xml storage/reserves.xml
+```
+
+É possível importa arquivos em outras rotas através desse comando:
+
+```bash
+php artisan app:import-database-xml sua/rota/xml
+```
+
+---
+
+### Segurança e Validação
+
+- **Validações:** Implementadas no Request para evitar injeções SQL.
+- **Autenticação:** Laravel Sanctum foi configurado para segurança das rotas.
+- **Filtros e Logs:** Adicionados para monitorar as operações e limitar os atributos retornados.
+
+---
+
+### Testes
+
+1. **Testes Unitários de Banco de Dados e Rotas:**
+   - **DatabaseTest:** `tests/Unit/DatabaseTest.php`
+   - **RoomsGetTest:** `tests/Unit/RoomsGetTest.php`
+   - **ReservesGetTest:** `tests/Unit/ReservesGetTest.php`
+
+2. **Executar Testes:**
+
+   ```bash
+   vendor/bin/phpunit tests/Unit/DatabaseTest.php
+   vendor/bin/phpunit tests/Unit/RoomsGetTest.php
+   vendor/bin/phpunit tests/Unit/ReservesGetTest.php
+   ```
+
+---
+
+### Documentação Swagger
+
+1. **Instalação e Configuração:**
+
+   ```bash
+   composer require darkaonline/l5-swagger
+   php artisan vendor:publish --provider="L5Swagger\L5SwaggerServiceProvider"
+   php artisan l5-swagger:generate   //Comando que utilizei para gerar documentação
+   ```
+
+2. **Acesso:** A documentação pode ser visualizada na rota `/api/documentation`.
+
+> **Referências para desenvolvimento com swagger:**
+> - Swagger: [https://swagger.io/](https://swagger.io/)
+
+---
+
+### Estrutura de Projeto e Design Patterns
+
+- Seguido o padrão **MVC** do Laravel.
+- **Factories** e **Seeders** foram implementados para popular o banco de dados com dados de teste.
+- **RepositoryInterface:** Padrão de repositório para consistência no CRUD e reutilização de código.
+- **Request:** Padrão de repositório para validação das requesições.  
+--- 
+
+Execução individual de cada Seeder
+
+```bash
+php artisan db:seed --class=RoomSeeder
+php artisan db:seed --class=ReserveSeeder
+php artisan db:seed --class=UserSeeder 
+php artisan db:seed --class=GuestSeeder 
+php artisan db:seed --class=DailySeeder 
+php artisan db:seed --class=PaymentSeeder 
+```
+Execução de todos de uma vez
+
+```bash
+php artisan db:seed
+```
+
+---
+
+**Logs:** Adicionados nos controllers para rastreamento e monitoramento de operações.
+- É possível acessar os logs em `storage/logs/laravel.log`
+
+---
+**Migrations:** Tabelas adicionadas para o sistema.
+
+- Hotel:
+```bash
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('hotels', function (Blueprint $table) {
+            $table->id('hotel_id');
+            $table->string('name');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('hotels');
+    }
+};
+```
+
+- Room:
+```bash
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('rooms', function (Blueprint $table) {
+            $table->id('room_id');
+            $table->unsignedBigInteger('hotel_id');
+            $table->string('name', 100)->notNullable();
+            $table->foreign('hotel_id')->references('hotel_id')->on('hotels')->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('rooms');
+    }
+};
+```
+
+- Reserves:
+```bash
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('reserves', function (Blueprint $table) {
+            $table->id('reserve_id');
+            $table->unsignedBigInteger('hotel_id');
+            $table->unsignedBigInteger('room_id');
+            $table->date('check_in');
+            $table->date('check_out');
+            $table->decimal('total', 10, 2);
+    
+            $table->foreign('hotel_id')->references('hotel_id')->on('hotels')->onDelete('cascade');
+            $table->foreign('room_id')->references('room_id')->on('rooms')->onDelete('cascade');
+    
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('reserves');
+    }
+};
+```
+
+- Daily:
+```bash
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('dailies', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('reserve_id');
+            $table->date('date');
+            $table->decimal('value', 10, 2);
+
+            $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('dailies');
+    }
+};
+```
+
+- Payment:
+```bash
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('payments', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('reserve_id');
+            $table->unsignedTinyInteger('method');
+            $table->decimal('value', 10, 2);
+            $table->timestamps();
+
+            $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('payments');
+    }
+};
+```
+
+- Guest:
+```bash
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('guests', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('reserve_id');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('phone')->nullable();
+            $table->foreign('reserve_id')->references('reserve_id')->on('reserves')->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('guests');
+    }
+};
+```
+
+---
+
+Agradeço a Foco Multimídia pela oportunidade de participar deste teste e espero poder encontrá-los novamente em breve.
+
+---
+
